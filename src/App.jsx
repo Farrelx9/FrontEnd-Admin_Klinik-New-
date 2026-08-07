@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import GuestRoute from "./routes/GuestRoute";
@@ -9,7 +10,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PatientsPage from "./pages/patients/PatientsPage";
 import MedicalRecordsPage from "./pages/records/MedicalRecordsPage";
 import AppointmentsPage from "./pages/appointments/AppointmentsPage";
-import ServicesPage from "./pages/services/ServicesPage";
+import ServicesPage from "./pages/tindakan/TindakanPages";
 import PaymentsPage from "./pages/payments/PaymentsPage";
 import ReportsPage from "./pages/reports/ReportsPage";
 import StaffPage from "./pages/staff/StaffPage";
@@ -21,6 +22,19 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              fontFamily: "var(--font-body)",
+              fontSize: "13.5px",
+              borderRadius: "10px",
+              border: "1px solid var(--color-border)",
+            },
+            success: { iconTheme: { primary: "#146464", secondary: "#fff" } },
+            error: { iconTheme: { primary: "#E4664B", secondary: "#fff" } },
+          }}
+        />
         <Routes>
           {/* Guest-only */}
           <Route element={<GuestRoute />}>

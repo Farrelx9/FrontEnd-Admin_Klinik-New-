@@ -1,7 +1,7 @@
 import { Stethoscope } from "lucide-react";
 import PlaceholderPage from "../../components/PlaceholderPage";
 
-export default function ServicesPage() {
+export default function TindakanPages() {
   return (
     <PlaceholderPage
       title="Layanan & Tindakan"

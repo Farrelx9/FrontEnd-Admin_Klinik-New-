@@ -30,7 +30,7 @@ api.interceptors.response.use(
       window.dispatchEvent(new Event("klinik:unauthorized"));
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
