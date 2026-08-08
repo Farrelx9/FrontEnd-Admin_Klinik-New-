@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import PatientPicker from "../../components/PatientPicker";
 import { getServices } from "../../services/serviceService";
-import { createMedicalRecord, updateMedicalRecord } from "../../services/medicalRecordService";
+import {
+  createMedicalRecord,
+  updateMedicalRecord,
+} from "../../services/medicalRecordService";
 import { formatCurrency } from "../../utils/format";
 
 function todayInputValue() {
@@ -32,6 +35,7 @@ export default function MedicalRecordFormModal({
   const [patient, setPatient] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [allServices, setAllServices] = useState([]);
+  const [serviceSearch, setServiceSearch] = useState("");
   const [selectedServices, setSelectedServices] = useState([]); // [{serviceId, toothNumber}]
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState(null);
@@ -39,7 +43,9 @@ export default function MedicalRecordFormModal({
 
   useEffect(() => {
     if (!open) return;
-    getServices().then((res) => setAllServices(res.data)).catch(() => setAllServices([]));
+    getServices()
+      .then((res) => setAllServices(res.data))
+      .catch(() => setAllServices([]));
   }, [open]);
 
   useEffect(() => {
@@ -51,7 +57,9 @@ export default function MedicalRecordFormModal({
         diagnosis: record.diagnosis || "",
         treatment: record.treatment || "",
         notes: record.notes || "",
-        visitDate: record.visitDate ? record.visitDate.slice(0, 10) : todayInputValue(),
+        visitDate: record.visitDate
+          ? record.visitDate.slice(0, 10)
+          : todayInputValue(),
       });
       setSelectedServices(
         (record.services || []).map((s) => ({
@@ -64,6 +72,7 @@ export default function MedicalRecordFormModal({
       setForm(EMPTY_FORM);
       setSelectedServices([]);
     }
+    setServiceSearch("");
     setErrors({});
     setSubmitError(null);
   }, [open, record, defaultPatient]);
@@ -72,9 +81,6 @@ export default function MedicalRecordFormModal({
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
-
-  const isServiceSelected = (serviceId) =>
-    selectedServices.some((s) => s.serviceId === serviceId);
 
   const toggleService = (serviceId) => {
     setSelectedServices((prev) =>
@@ -94,6 +100,10 @@ export default function MedicalRecordFormModal({
     const service = allServices.find((s) => s.id === sel.serviceId);
     return sum + (service ? Number(service.price) : 0);
   }, 0);
+
+  const filteredServices = allServices.filter((s) =>
+    s.name.toLowerCase().includes(serviceSearch.trim().toLowerCase())
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,7 +134,9 @@ export default function MedicalRecordFormModal({
       if (err.response?.status === 422) {
         setErrors(err.response.data.errors || {});
       } else {
-        setSubmitError(err.response?.data?.message || "Gagal menyimpan rekam medis.");
+        setSubmitError(
+          err.response?.data?.message || "Gagal menyimpan rekam medis."
+        );
       }
     } finally {
       setPending(false);
@@ -140,7 +152,11 @@ export default function MedicalRecordFormModal({
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <Field label="Pasien" required>
-          <PatientPicker value={patient} onChange={setPatient} disabled={isEdit} />
+          <PatientPicker
+            value={patient}
+            onChange={setPatient}
+            disabled={isEdit}
+          />
           {isEdit && (
             <p className="mt-1 font-body text-xs text-[var(--color-muted)]">
               Pasien tidak bisa diubah setelah rekam medis dibuat.
@@ -198,41 +214,65 @@ export default function MedicalRecordFormModal({
           </label>
           {allServices.length === 0 ? (
             <p className="rounded-lg border border-dashed border-[var(--color-border)] px-3.5 py-3 font-body text-sm text-[var(--color-muted)]">
-              Belum ada data layanan. Tambahkan dulu di halaman Layanan & Tindakan.
+              Belum ada data layanan. Tambahkan dulu di halaman Layanan &
+              Tindakan.
             </p>
           ) : (
             <div className="rounded-lg border border-[var(--color-border)]">
-              <ul className="divide-y divide-[var(--color-border)]">
-                {allServices.map((service) => {
-                  const selected = selectedServices.find((s) => s.serviceId === service.id);
-                  return (
-                    <li key={service.id} className="flex flex-wrap items-center gap-3 px-3.5 py-2.5">
-                      <label className="flex flex-1 items-center gap-2.5">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(selected)}
-                          onChange={() => toggleService(service.id)}
-                          className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-teal-700)] focus:ring-[var(--color-teal-500)]"
-                        />
-                        <span className="font-body text-sm text-[var(--color-ink)]">
-                          {service.name}
-                        </span>
-                        <span className="font-mono text-xs text-[var(--color-muted)]">
-                          {formatCurrency(service.price)}
-                        </span>
-                      </label>
-                      {selected && (
-                        <input
-                          value={selected.toothNumber}
-                          onChange={(e) => setToothNumber(service.id, e.target.value)}
-                          placeholder="No. gigi"
-                          className="w-24 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 font-mono text-xs text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)]"
-                        />
-                      )}
-                    </li>
-                  );
-                })}
+              <div className="border-b border-[var(--color-border)] p-2">
+                <input
+                  value={serviceSearch}
+                  onChange={(e) => setServiceSearch(e.target.value)}
+                  placeholder={`Cari dari ${allServices.length} layanan…`}
+                  className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 font-body text-[13px] text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)]"
+                />
+              </div>
+
+              <ul className="max-h-56 divide-y divide-[var(--color-border)] overflow-y-auto">
+                {filteredServices.length === 0 ? (
+                  <li className="px-3.5 py-4 text-center font-body text-sm text-[var(--color-muted)]">
+                    Tidak ada layanan yang cocok dengan "{serviceSearch}".
+                  </li>
+                ) : (
+                  filteredServices.map((service) => {
+                    const selected = selectedServices.find(
+                      (s) => s.serviceId === service.id
+                    );
+                    return (
+                      <li
+                        key={service.id}
+                        className="flex flex-wrap items-center gap-3 px-3.5 py-2.5"
+                      >
+                        <label className="flex flex-1 items-center gap-2.5">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(selected)}
+                            onChange={() => toggleService(service.id)}
+                            className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-teal-700)] focus:ring-[var(--color-teal-500)]"
+                          />
+                          <span className="font-body text-sm text-[var(--color-ink)]">
+                            {service.name}
+                          </span>
+                          <span className="font-mono text-xs text-[var(--color-muted)]">
+                            {formatCurrency(service.price)}
+                          </span>
+                        </label>
+                        {selected && (
+                          <input
+                            value={selected.toothNumber}
+                            onChange={(e) =>
+                              setToothNumber(service.id, e.target.value)
+                            }
+                            placeholder="No. gigi"
+                            className="w-24 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 font-mono text-xs text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)]"
+                          />
+                        )}
+                      </li>
+                    );
+                  })
+                )}
               </ul>
+
               {selectedServices.length > 0 && (
                 <div className="flex items-center justify-between border-t border-[var(--color-border)] bg-[var(--color-bg)] px-3.5 py-2.5">
                   <span className="font-body text-xs font-medium text-[var(--color-muted)]">
@@ -280,7 +320,11 @@ export default function MedicalRecordFormModal({
             disabled={pending}
             className="rounded-lg bg-[var(--color-teal-700)] px-5 py-2.5 font-body text-sm font-semibold text-white hover:bg-[var(--color-teal-600)] disabled:opacity-60"
           >
-            {pending ? "Menyimpan…" : isEdit ? "Simpan Perubahan" : "Simpan Rekam Medis"}
+            {pending
+              ? "Menyimpan…"
+              : isEdit
+              ? "Simpan Perubahan"
+              : "Simpan Rekam Medis"}
           </button>
         </div>
       </form>
@@ -292,10 +336,15 @@ function Field({ label, required, error, children }) {
   return (
     <div>
       <label className="mb-1.5 block font-body text-[13px] font-medium text-[var(--color-ink)]">
-        {label} {required && <span className="text-[var(--color-coral)]">*</span>}
+        {label}{" "}
+        {required && <span className="text-[var(--color-coral)]">*</span>}
       </label>
       {children}
-      {error && <p className="mt-1 font-body text-xs text-[var(--color-coral)]">{error}</p>}
+      {error && (
+        <p className="mt-1 font-body text-xs text-[var(--color-coral)]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

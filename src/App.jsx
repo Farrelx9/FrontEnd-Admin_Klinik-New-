@@ -10,7 +10,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PatientsPage from "./pages/patients/PatientsPage";
 import MedicalRecordsPage from "./pages/records/MedicalRecordsPage";
 import AppointmentsPage from "./pages/appointments/AppointmentsPage";
-import ServicesPage from "./pages/tindakan/TindakanPages";
+import ServicesPage from "./pages/tindakan/ServicesPage";
 import PaymentsPage from "./pages/payments/PaymentsPage";
 import ReportsPage from "./pages/reports/ReportsPage";
 import StaffPage from "./pages/staff/StaffPage";
@@ -51,6 +51,7 @@ export default function App() {
               <Route path="/layanan" element={<ServicesPage />} />
               <Route path="/pembayaran" element={<PaymentsPage />} />
               <Route path="/laporan" element={<ReportsPage />} />
+              <Route path="/tindakan" element={<ServicesPage />} />
 
               {/* Example of a role-restricted route — only admin/dokter can
                   see staff management. Adjust roles to match your API. */}
