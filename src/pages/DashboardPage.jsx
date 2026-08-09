@@ -3,10 +3,25 @@ import { useAuth } from "../context/AuthContext";
 import PageHeader from "../components/PageHeader";
 
 const STATS = [
-  { label: "Kunjungan Hari Ini", value: "12", icon: CalendarClock, accent: "teal" },
+  {
+    label: "Kunjungan Hari Ini",
+    value: "12",
+    icon: CalendarClock,
+    accent: "teal",
+  },
   { label: "Pasien Terdaftar", value: "348", icon: Users, accent: "mint" },
-  { label: "Tindakan Bulan Ini", value: "97", icon: Stethoscope, accent: "gold" },
-  { label: "Pendapatan Bulan Ini", value: "Rp 42,6jt", icon: Wallet, accent: "coral" },
+  {
+    label: "Tindakan Bulan Ini",
+    value: "97",
+    icon: Stethoscope,
+    accent: "gold",
+  },
+  {
+    label: "Pendapatan Bulan Ini",
+    value: "Rp 42,6jt",
+    icon: Wallet,
+    accent: "coral",
+  },
 ];
 
 const ACCENT_STYLES = {
@@ -65,7 +80,7 @@ export default function DashboardPage() {
             Aktivitas Terbaru
           </h3>
           <p className="mt-1 font-body text-[13px] text-[var(--color-muted)]">
-            Log aktivitas staf &amp; sistem.
+            Log aktivitas sistem.
           </p>
           <div className="mt-4 flex h-40 items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] font-body text-sm text-[var(--color-muted)]">
             Belum ada data

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import PatientPicker from "../../components/PatientPicker";
+import ToothChartPicker from "../../components/ToothChartPicker";
 import { getServices } from "../../services/serviceService";
 import {
   createMedicalRecord,
@@ -36,7 +37,9 @@ export default function MedicalRecordFormModal({
   const [form, setForm] = useState(EMPTY_FORM);
   const [allServices, setAllServices] = useState([]);
   const [serviceSearch, setServiceSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedServices, setSelectedServices] = useState([]); // [{serviceId, toothNumber}]
+  const [toothPickerTarget, setToothPickerTarget] = useState(null); // { serviceId, serviceName } | null
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState(null);
   const [pending, setPending] = useState(false);
@@ -47,6 +50,14 @@ export default function MedicalRecordFormModal({
       .then((res) => setAllServices(res.data))
       .catch(() => setAllServices([]));
   }, [open]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(serviceSearch);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [serviceSearch]);
 
   useEffect(() => {
     if (!open) return;
@@ -73,6 +84,7 @@ export default function MedicalRecordFormModal({
       setSelectedServices([]);
     }
     setServiceSearch("");
+    setDebouncedSearch("");
     setErrors({});
     setSubmitError(null);
   }, [open, record, defaultPatient]);
@@ -102,7 +114,7 @@ export default function MedicalRecordFormModal({
   }, 0);
 
   const filteredServices = allServices.filter((s) =>
-    s.name.toLowerCase().includes(serviceSearch.trim().toLowerCase())
+    s.name.toLowerCase().includes(debouncedSearch.trim().toLowerCase())
   );
 
   const handleSubmit = async (e) => {
@@ -231,7 +243,7 @@ export default function MedicalRecordFormModal({
               <ul className="max-h-56 divide-y divide-[var(--color-border)] overflow-y-auto">
                 {filteredServices.length === 0 ? (
                   <li className="px-3.5 py-4 text-center font-body text-sm text-[var(--color-muted)]">
-                    Tidak ada layanan yang cocok dengan "{serviceSearch}".
+                    Tidak ada layanan yang cocok dengan "{debouncedSearch}".
                   </li>
                 ) : (
                   filteredServices.map((service) => {
@@ -258,14 +270,24 @@ export default function MedicalRecordFormModal({
                           </span>
                         </label>
                         {selected && (
-                          <input
-                            value={selected.toothNumber}
-                            onChange={(e) =>
-                              setToothNumber(service.id, e.target.value)
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setToothPickerTarget({
+                                serviceId: service.id,
+                                serviceName: service.name,
+                              })
                             }
-                            placeholder="No. gigi"
-                            className="w-24 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 font-mono text-xs text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)]"
-                          />
+                            className={`flex min-w-[6.5rem] items-center justify-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-xs transition-colors ${
+                              selected.toothNumber
+                                ? "border-[var(--color-teal-700)] bg-[var(--color-mint-200)]/40 text-[var(--color-teal-700)]"
+                                : "border-dashed border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-teal-500)] hover:text-[var(--color-teal-700)]"
+                            }`}
+                          >
+                            {selected.toothNumber
+                              ? `Gigi ${selected.toothNumber}`
+                              : "Pilih gigi"}
+                          </button>
                         )}
                       </li>
                     );
@@ -328,6 +350,24 @@ export default function MedicalRecordFormModal({
           </button>
         </div>
       </form>
+
+      <ToothChartPicker
+        open={Boolean(toothPickerTarget)}
+        onClose={() => setToothPickerTarget(null)}
+        value={
+          toothPickerTarget
+            ? selectedServices.find(
+                (s) => s.serviceId === toothPickerTarget.serviceId
+              )?.toothNumber || ""
+            : ""
+        }
+        serviceName={toothPickerTarget?.serviceName}
+        onConfirm={(toothString) => {
+          if (toothPickerTarget) {
+            setToothNumber(toothPickerTarget.serviceId, toothString);
+          }
+        }}
+      />
     </Modal>
   );
 }

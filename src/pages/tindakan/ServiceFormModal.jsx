@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
+import CurrencyInput from "../../components/CurrencyInput";
 import { createService, updateService } from "../../services/serviceService";
 
 const EMPTY_FORM = { name: "", description: "", price: "" };
@@ -31,11 +32,21 @@ export default function ServiceFormModal({ open, onClose, service, onSaved }) {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
+  const handlePriceChange = (numericValue) => {
+    setForm((f) => ({ ...f, price: numericValue }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setPending(true);
     setErrors({});
     setSubmitError(null);
+
+    if (form.price === "") {
+      setErrors({ price: ["Harga wajib diisi."] });
+      setPending(false);
+      return;
+    }
 
     const payload = { ...form, price: Number(form.price) };
 
@@ -87,16 +98,10 @@ export default function ServiceFormModal({ open, onClose, service, onSaved }) {
         </Field>
 
         <Field label="Harga (Rp)" required error={errors.price?.[0]}>
-          <input
-            type="number"
-            name="price"
+          <CurrencyInput
             value={form.price}
-            onChange={handleChange}
-            required
-            min="0"
-            step="1000"
-            placeholder="0"
-            className={`${inputClass(errors.price)} font-mono`}
+            onChange={handlePriceChange}
+            error={errors.price?.[0]}
           />
         </Field>
 
