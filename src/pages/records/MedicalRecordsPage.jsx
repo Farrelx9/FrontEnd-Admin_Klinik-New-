@@ -1,10 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
+  Printer,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import PageHeader from "../../components/PageHeader";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import PatientPicker from "../../components/PatientPicker";
-import { getMedicalRecords, deleteMedicalRecord } from "../../services/medicalRecordService";
+import {
+  getMedicalRecords,
+  deleteMedicalRecord,
+} from "../../services/medicalRecordService";
 import { formatCurrency, formatDate } from "../../utils/format";
 import MedicalRecordFormModal from "./MedicalRecordFormModal";
 import MedicalRecordDetailModal from "./MedicalRecordDetailModal";
@@ -42,7 +54,8 @@ export default function MedicalRecordsPage() {
       setMeta(res.meta);
     } catch (err) {
       setLoadError(
-        err.response?.data?.message || "Gagal memuat rekam medis. Cek koneksi ke server."
+        err.response?.data?.message ||
+          "Gagal memuat rekam medis. Cek koneksi ke server.",
       );
     } finally {
       setLoading(false);
@@ -75,7 +88,9 @@ export default function MedicalRecordsPage() {
 
   const handleSaved = () => {
     setFormOpen(false);
-    toast.success(editingRecord ? "Rekam medis diperbarui." : "Rekam medis ditambahkan.");
+    toast.success(
+      editingRecord ? "Rekam medis diperbarui." : "Rekam medis ditambahkan.",
+    );
     fetchRecords();
   };
 
@@ -92,14 +107,19 @@ export default function MedicalRecordsPage() {
         fetchRecords();
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Gagal menghapus rekam medis.");
+      toast.error(
+        err.response?.data?.message || "Gagal menghapus rekam medis.",
+      );
     } finally {
       setDeletePending(false);
     }
   };
 
   const recordTotal = (record) =>
-    (record.services || []).reduce((sum, s) => sum + Number(s.priceAtTime || 0), 0);
+    (record.services || []).reduce(
+      (sum, s) => sum + Number(s.priceAtTime || 0),
+      0,
+    );
 
   return (
     <div>
@@ -107,14 +127,28 @@ export default function MedicalRecordsPage() {
         title="Rekam Medis"
         description="Riwayat pemeriksaan dan tindakan per pasien."
         actions={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="flex items-center gap-2 rounded-lg bg-[var(--color-teal-700)] px-4 py-2.5 font-body text-sm font-semibold text-white hover:bg-[var(--color-teal-600)]"
-          >
-            <Plus size={16} />
-            Tambah Rekam Medis
-          </button>
+          <>
+            {filterPatient && (
+              <Link
+                to={`/rekam-medis/pasien/${filterPatient.id}/cetak`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] px-4 py-2.5 font-body text-sm font-semibold text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40"
+              >
+                <Printer size={16} />
+                <span className="hidden sm:inline">Cetak Riwayat Lengkap</span>
+                <span className="sm:hidden">Cetak</span>
+              </Link>
+            )}
+            <button
+              type="button"
+              onClick={openCreate}
+              className="flex items-center gap-2 rounded-lg bg-[var(--color-teal-700)] px-4 py-2.5 font-body text-sm font-semibold text-white hover:bg-[var(--color-teal-600)]"
+            >
+              <Plus size={16} />
+              Tambah Rekam Medis
+            </button>
+          </>
         }
       />
 
@@ -127,7 +161,9 @@ export default function MedicalRecordsPage() {
           <ListSkeleton />
         ) : loadError ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="font-body text-sm text-[var(--color-coral)]">{loadError}</p>
+            <p className="font-body text-sm text-[var(--color-coral)]">
+              {loadError}
+            </p>
             <button
               onClick={fetchRecords}
               className="mt-3 rounded-lg border border-[var(--color-border)] px-4 py-2 font-body text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40"
@@ -165,7 +201,11 @@ export default function MedicalRecordsPage() {
                     </Td>
                     <Td>
                       <span className="font-mono text-[13px] text-[var(--color-ink)]">
-                        {formatDate(r.visitDate, { day: "2-digit", month: "short", year: "numeric" })}
+                        {formatDate(r.visitDate, {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </span>
                     </Td>
                     <Td>
@@ -186,7 +226,10 @@ export default function MedicalRecordsPage() {
                       </span>
                     </Td>
                     <Td className="text-right">
-                      <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                      <div
+                        className="flex justify-end gap-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button
                           type="button"
                           onClick={() => openEdit(r)}
@@ -224,7 +267,11 @@ export default function MedicalRecordsPage() {
                         {r.patient?.name}
                       </p>
                       <p className="mt-0.5 font-mono text-xs text-[var(--color-muted)]">
-                        {formatDate(r.visitDate, { day: "2-digit", month: "short", year: "numeric" })}
+                        {formatDate(r.visitDate, {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </p>
                       <p className="mt-1 truncate font-body text-xs text-[var(--color-ink)]">
                         {r.diagnosis || r.complaint || "Tidak ada diagnosis"}
@@ -335,7 +382,9 @@ function EmptyState({ hasFilter, onAdd }) {
         <FileText size={22} />
       </span>
       <p className="mt-3 font-display text-[15px] font-semibold text-[var(--color-ink)]">
-        {hasFilter ? "Belum ada rekam medis untuk pasien ini" : "Belum ada rekam medis"}
+        {hasFilter
+          ? "Belum ada rekam medis untuk pasien ini"
+          : "Belum ada rekam medis"}
       </p>
       <p className="mt-1 max-w-xs font-body text-sm text-[var(--color-muted)]">
         {hasFilter

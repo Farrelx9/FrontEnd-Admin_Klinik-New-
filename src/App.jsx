@@ -9,6 +9,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import PatientsPage from "./pages/patients/PatientsPage";
 import MedicalRecordsPage from "./pages/records/MedicalRecordsPage";
+import PrintMedicalRecordPage from "./pages/records/print/PrintMedicalRecordPage";
+import PrintPatientHistoryPage from "./pages/records/print/PrintPatientHistoryPage";
 import AppointmentsPage from "./pages/appointments/AppointmentsPage";
 import ServicesPage from "./pages/tindakan/ServicesPage";
 import PaymentsPage from "./pages/payments/PaymentsPage";
@@ -43,6 +45,17 @@ export default function App() {
 
           {/* Authenticated app shell */}
           <Route element={<ProtectedRoute />}>
+            {/* Print/PDF views live outside AdminLayout on purpose — no
+                sidebar or topbar should ever end up in the printed page. */}
+            <Route
+              path="/rekam-medis/:id/cetak"
+              element={<PrintMedicalRecordPage />}
+            />
+            <Route
+              path="/rekam-medis/pasien/:patientId/cetak"
+              element={<PrintPatientHistoryPage />}
+            />
+
             <Route element={<AdminLayout />}>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/jadwal" element={<AppointmentsPage />} />
@@ -51,7 +64,6 @@ export default function App() {
               <Route path="/layanan" element={<ServicesPage />} />
               <Route path="/pembayaran" element={<PaymentsPage />} />
               <Route path="/laporan" element={<ReportsPage />} />
-              <Route path="/tindakan" element={<ServicesPage />} />
 
               {/* Example of a role-restricted route — only admin/dokter can
                   see staff management. Adjust roles to match your API. */}

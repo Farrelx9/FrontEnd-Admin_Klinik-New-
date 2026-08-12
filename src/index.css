@@ -1,31 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap");
 @import "tailwindcss";
 
 @theme {
   /* Color tokens */
-  --color-ink: #16292A;
-  --color-teal-900: #0B3B3D;
-  --color-teal-700: #0E4F4F;
+  --color-ink: #16292a;
+  --color-teal-900: #0b3b3d;
+  --color-teal-700: #0e4f4f;
   --color-teal-600: #146464;
-  --color-teal-500: #1C7C77;
-  --color-mint-400: #7FC8BA;
-  --color-mint-200: #C9EAE0;
-  --color-bg: #F5F8F7;
-  --color-surface: #FFFFFF;
-  --color-border: #DEE7E3;
+  --color-teal-500: #1c7c77;
+  --color-mint-400: #7fc8ba;
+  --color-mint-200: #c9eae0;
+  --color-bg: #f5f8f7;
+  --color-surface: #ffffff;
+  --color-border: #dee7e3;
   --color-muted: #627774;
-  --color-coral: #E4664B;
-  --color-coral-soft: #FBE7E1;
-  --color-gold: #C9922F;
-  --color-gold-soft: #F7EEDA;
+  --color-coral: #e4664b;
+  --color-coral-soft: #fbe7e1;
+  --color-gold: #c9922f;
+  --color-gold-soft: #f7eeda;
 
   /* Fonts */
-  --font-display: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -59,17 +61,34 @@ body {
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-fade-in-up {
   animation: fade-in-up 0.35s ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+@media print {
+  @page {
+    margin: 16mm 14mm;
+  }
+  body {
+    background: white;
   }
 }

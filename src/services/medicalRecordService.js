@@ -20,3 +20,21 @@ export const updateMedicalRecord = (id, payload) =>
   api.put(`/medical-records/${id}`, payload).then((res) => res.data);
 
 export const deleteMedicalRecord = (id) => api.delete(`/medical-records/${id}`);
+
+// Fetches every record matching `params`, looping through pages under the
+// hood (the backend caps pageSize at 100). Used for exports, where we
+// want the full filtered set — not just whatever page is on screen.
+export const getAllMedicalRecords = async (params = {}) => {
+  const pageSize = 100;
+  let page = 1;
+  let all = [];
+
+  while (true) {
+    const res = await getMedicalRecords({ ...params, page, pageSize });
+    all = all.concat(res.data);
+    if (page >= res.meta.totalPages) break;
+    page += 1;
+  }
+
+  return all;
+};

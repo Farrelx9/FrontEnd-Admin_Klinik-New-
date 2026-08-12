@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X, Check } from "lucide-react";
+import { X, Check, Baby } from "lucide-react";
 
 // FDI two-digit tooth notation, laid out the way a dentist's chart is
 // conventionally drawn: patient's right on the viewer's left, upper arch
@@ -9,6 +9,14 @@ const UPPER_RIGHT = [18, 17, 16, 15, 14, 13, 12, 11];
 const UPPER_LEFT = [21, 22, 23, 24, 25, 26, 27, 28];
 const LOWER_RIGHT = [48, 47, 46, 45, 44, 43, 42, 41];
 const LOWER_LEFT = [31, 32, 33, 34, 35, 36, 37, 38];
+
+// Gigi susu / desidui (FDI notation, quadrants 5-8) — sits between the
+// permanent rows on a standard odontogram. Shown only when toggled on,
+// since most patients are adults with permanent teeth only.
+const PRIMARY_UPPER_RIGHT = [55, 54, 53, 52, 51];
+const PRIMARY_UPPER_LEFT = [61, 62, 63, 64, 65];
+const PRIMARY_LOWER_RIGHT = [85, 84, 83, 82, 81];
+const PRIMARY_LOWER_LEFT = [71, 72, 73, 74, 75];
 
 function parseValue(value) {
   if (!value) return [];
@@ -24,6 +32,13 @@ function parseValue(value) {
  * `toothNumber` on the backend — this component is just a nicer way to
  * produce that same string, no schema change needed.
  */
+const ALL_PRIMARY = [
+  ...PRIMARY_UPPER_RIGHT,
+  ...PRIMARY_UPPER_LEFT,
+  ...PRIMARY_LOWER_RIGHT,
+  ...PRIMARY_LOWER_LEFT,
+].map(String);
+
 export default function ToothChartPicker({
   open,
   onClose,
@@ -32,9 +47,16 @@ export default function ToothChartPicker({
   serviceName,
 }) {
   const [selected, setSelected] = useState(parseValue(value));
+  const [showPrimary, setShowPrimary] = useState(false);
 
   useEffect(() => {
-    if (open) setSelected(parseValue(value));
+    if (!open) return;
+    const parsed = parseValue(value);
+    setSelected(parsed);
+    // If we're editing a selection that already has a gigi susu in it,
+    // reveal the primary rows automatically instead of hiding a tooth
+    // that's already chosen.
+    setShowPrimary(parsed.some((n) => ALL_PRIMARY.includes(n)));
   }, [open, value]);
 
   if (!open) return null;
@@ -43,7 +65,7 @@ export default function ToothChartPicker({
     setSelected((prev) =>
       prev.includes(String(num))
         ? prev.filter((n) => n !== String(num))
-        : [...prev, String(num)]
+        : [...prev, String(num)],
     );
   };
 
@@ -58,7 +80,7 @@ export default function ToothChartPicker({
         className="fixed inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
       />
-      <div className="relative flex max-h-[90vh] w-full max-w-lg animate-fade-in-up flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl animate-fade-in-up flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl">
         <div className="flex shrink-0 items-center justify-between border-b border-[var(--color-border)] px-5 py-4">
           <div>
             <h3 className="font-display text-[15px] font-bold text-[var(--color-ink)]">
@@ -81,12 +103,55 @@ export default function ToothChartPicker({
         </div>
 
         <div className="overflow-y-auto px-5 py-5">
+          {/* Toggle for gigi susu — off by default since most patients
+              are adults; the primary rows only take up space when needed. */}
+          <label className="mb-4 flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-[var(--color-mint-400)]/40 bg-[var(--color-mint-200)]/35 px-3.5 py-2.5">
+            <span className="flex items-center gap-2">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-teal-700)] text-white">
+                <Baby size={14} />
+              </span>
+              <span className="font-body text-[13px] font-medium text-[var(--color-teal-900)]">
+                Sertakan gigi susu (pasien anak)
+              </span>
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={showPrimary}
+              onClick={() => setShowPrimary((v) => !v)}
+              className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+                showPrimary ? "bg-[var(--color-teal-700)]" : "bg-white"
+              }`}
+            >
+              <span
+                className={`absolute left-0 top-0.5 h-4 w-4 rounded-full shadow transition-transform ${
+                  showPrimary
+                    ? "translate-x-[18px] bg-white"
+                    : "translate-x-0.5 bg-[var(--color-muted)]"
+                }`}
+              />
+            </button>
+          </label>
+
+          {showPrimary && (
+            <div className="mb-3 flex items-center justify-center gap-4">
+              <span className="flex items-center gap-1.5 font-body text-[11px] text-[var(--color-muted)]">
+                <span className="h-2.5 w-2.5 rounded-sm border border-[var(--color-border)] bg-[var(--color-bg)]" />
+                Permanen
+              </span>
+              <span className="flex items-center gap-1.5 font-body text-[11px] text-[var(--color-muted)]">
+                <span className="h-2.5 w-2.5 rounded-sm border border-[var(--color-gold)]/50 bg-[var(--color-gold-soft)]" />
+                Gigi susu
+              </span>
+            </div>
+          )}
+
           {/* On narrow screens 16 teeth across is wider than the modal,
-              so the whole chart scrolls horizontally as one unit — upper
-              and lower arches stay aligned while scrolling together. */}
+              so the whole chart scrolls horizontally as one unit — every
+              row stays aligned while scrolling together. */}
           <div className="-mx-5 overflow-x-auto px-5">
             <div className="mx-auto w-max min-w-full">
-              {/* Upper arch */}
+              {/* Permanent upper arch */}
               <div className="flex justify-center gap-1.5">
                 <ToothRow
                   teeth={UPPER_RIGHT}
@@ -101,6 +166,24 @@ export default function ToothChartPicker({
                 />
               </div>
 
+              {showPrimary && (
+                <div className="mt-1.5 flex justify-center gap-1.5">
+                  <ToothRow
+                    teeth={PRIMARY_UPPER_RIGHT}
+                    selected={selected}
+                    onToggle={toggleTooth}
+                    primary
+                  />
+                  <div className="w-px shrink-0 self-stretch bg-[var(--color-border)]" />
+                  <ToothRow
+                    teeth={PRIMARY_UPPER_LEFT}
+                    selected={selected}
+                    onToggle={toggleTooth}
+                    primary
+                  />
+                </div>
+              )}
+
               {/* Arch curve divider */}
               <div className="my-3 flex items-center gap-2">
                 <div className="h-px flex-1 bg-[var(--color-border)]" />
@@ -110,7 +193,26 @@ export default function ToothChartPicker({
                 <div className="h-px flex-1 bg-[var(--color-border)]" />
               </div>
 
-              {/* Lower arch */}
+              {showPrimary && (
+                <div className="mb-1.5 flex justify-center gap-1.5">
+                  <ToothRow
+                    teeth={PRIMARY_LOWER_RIGHT}
+                    selected={selected}
+                    onToggle={toggleTooth}
+                    reverse
+                    primary
+                  />
+                  <div className="w-px shrink-0 self-stretch bg-[var(--color-border)]" />
+                  <ToothRow
+                    teeth={PRIMARY_LOWER_LEFT}
+                    selected={selected}
+                    onToggle={toggleTooth}
+                    primary
+                  />
+                </div>
+              )}
+
+              {/* Permanent lower arch */}
               <div className="flex justify-center gap-1.5">
                 <ToothRow
                   teeth={LOWER_RIGHT}
@@ -184,7 +286,7 @@ export default function ToothChartPicker({
   );
 }
 
-function ToothRow({ teeth, selected, onToggle, reverse }) {
+function ToothRow({ teeth, selected, onToggle, reverse, primary }) {
   const ordered = reverse ? teeth : teeth;
   return (
     <div className="flex shrink-0 gap-1">
@@ -195,10 +297,14 @@ function ToothRow({ teeth, selected, onToggle, reverse }) {
             key={num}
             type="button"
             onClick={() => onToggle(num)}
-            className={`flex h-10 w-8 shrink-0 flex-col items-center justify-center rounded-md border font-mono text-xs font-semibold transition-colors ${
+            className={`flex shrink-0 flex-col items-center justify-center rounded-md border font-mono font-semibold transition-colors ${
+              primary ? "h-8 w-7 text-[11px]" : "h-10 w-8 text-xs"
+            } ${
               isSelected
                 ? "border-[var(--color-teal-700)] bg-[var(--color-teal-700)] text-white"
-                : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-ink)] hover:border-[var(--color-mint-400)] hover:bg-[var(--color-mint-200)]/40"
+                : primary
+                  ? "border-[var(--color-gold)]/50 bg-[var(--color-gold-soft)] text-[var(--color-gold)] hover:border-[var(--color-gold)] hover:bg-[var(--color-gold-soft)]"
+                  : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-ink)] hover:border-[var(--color-mint-400)] hover:bg-[var(--color-mint-200)]/40"
             }`}
           >
             {num}
