@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  CalendarClock,
-  Users,
-  Stethoscope,
-  Wallet,
-  Clock,
-  FileText,
-  ArrowRight,
-} from "lucide-react";
+import { CalendarClock, Users, Stethoscope, Wallet, Clock, FileText, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import PageHeader from "../components/PageHeader";
@@ -29,9 +21,7 @@ function todayDateInput() {
 
 function isSameMonth(dateValue, ref) {
   const d = new Date(dateValue);
-  return (
-    d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth()
-  );
+  return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
 }
 
 const ACCENT_STYLES = {
@@ -69,26 +59,17 @@ export default function DashboardPage() {
 
         // allRecords already comes newest-first from the API.
         setRecentRecords(allRecords.slice(0, 5));
-        setMonthRecords(
-          allRecords.filter((r) => isSameMonth(r.visitDate, now)),
-        );
+        setMonthRecords(allRecords.filter((r) => isSameMonth(r.visitDate, now)));
       })
       .catch((err) => {
-        setError(
-          err.response?.data?.message || "Gagal memuat ringkasan dashboard.",
-        );
+        setError(err.response?.data?.message || "Gagal memuat ringkasan dashboard.");
       })
       .finally(() => setLoading(false));
   }, []);
 
   const monthRevenue = monthRecords.reduce(
-    (sum, r) =>
-      sum +
-      (r.services || []).reduce(
-        (s, item) => s + Number(item.priceAtTime || 0),
-        0,
-      ),
-    0,
+    (sum, r) => sum + (r.services || []).reduce((s, item) => s + Number(item.priceAtTime || 0), 0),
+    0
   );
 
   const upcomingToday = todayAppointments
@@ -153,9 +134,7 @@ export default function DashboardPage() {
                 value
               )}
             </p>
-            <p className="mt-1 font-body text-[13px] text-[var(--color-muted)]">
-              {label}
-            </p>
+            <p className="mt-1 font-body text-[13px] text-[var(--color-muted)]">{label}</p>
           </div>
         ))}
       </div>
@@ -179,10 +158,7 @@ export default function DashboardPage() {
           {loading ? (
             <div className="mt-4 space-y-2.5">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-12 animate-pulse rounded-lg bg-[var(--color-mint-200)]/30"
-                />
+                <div key={i} className="h-12 animate-pulse rounded-lg bg-[var(--color-mint-200)]/30" />
               ))}
             </div>
           ) : upcomingToday.length === 0 ? (
@@ -236,10 +212,7 @@ export default function DashboardPage() {
           {loading ? (
             <div className="mt-4 space-y-2.5">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-12 animate-pulse rounded-lg bg-[var(--color-mint-200)]/30"
-                />
+                <div key={i} className="h-12 animate-pulse rounded-lg bg-[var(--color-mint-200)]/30" />
               ))}
             </div>
           ) : recentRecords.length === 0 ? (
@@ -257,12 +230,7 @@ export default function DashboardPage() {
                     {r.patient?.name}
                   </p>
                   <p className="truncate font-body text-xs text-[var(--color-muted)]">
-                    {r.diagnosis || r.complaint || "Kunjungan"} ·{" "}
-                    {formatDate(r.visitDate, {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {r.diagnosis || r.complaint || "Kunjungan"} · {formatDate(r.visitDate, { day: "2-digit", month: "short", year: "numeric" })}
                   </p>
                 </li>
               ))}
