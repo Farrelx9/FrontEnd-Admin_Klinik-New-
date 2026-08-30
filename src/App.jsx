@@ -67,7 +67,7 @@ export default function App() {
 
               {/* Example of a role-restricted route — only admin/dokter can
                   see staff management. Adjust roles to match your API. */}
-              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+              <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
                 <Route path="/staf" element={<StaffPage />} />
               </Route>
 

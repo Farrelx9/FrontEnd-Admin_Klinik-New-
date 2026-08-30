@@ -39,7 +39,7 @@ export default function LoginPage() {
 
         <div className="relative flex items-center gap-2.5">
           <LogoMark className="h-9 w-9" />
-          <span className="font-display text-lg font-bold">Klinik Senyum</span>
+          <span className="font-display text-lg font-bold">drg. Irna Dental Care</span>
         </div>
 
         <div className="relative max-w-sm">
@@ -53,7 +53,7 @@ export default function LoginPage() {
         </div>
 
         <p className="relative font-body text-xs text-white/50">
-          © {new Date().getFullYear()} Klinik Senyum. Internal use only.
+          © {new Date().getFullYear()} drg. Irna Dental Care. Internal use only.
         </p>
       </div>
 
@@ -63,7 +63,7 @@ export default function LoginPage() {
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <LogoMark />
             <span className="font-display text-base font-bold text-[var(--color-ink)]">
-              Klinik Senyum
+              drg. Irna Dental Care
             </span>
           </div>
 

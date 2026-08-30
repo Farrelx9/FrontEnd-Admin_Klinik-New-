@@ -18,7 +18,7 @@ export function LogoLockup({ className = "" }) {
       <LogoMark />
       <div className="leading-tight">
         <p className="font-display text-[15px] font-bold text-[var(--color-ink)]">
-          Klinik Senyum
+          drg. Irna Dental Care
         </p>
         <p className="font-body text-[11px] text-[var(--color-muted)]">
           Panel Admin

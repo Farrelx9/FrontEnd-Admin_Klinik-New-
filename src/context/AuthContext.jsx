@@ -2,13 +2,10 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { fetchCurrentUser, loginRequest, logoutRequest } from "../services/authService";
 
 const AuthContext = createContext(null);
-
 const TOKEN_KEY = "klinik_token";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  // "booting" = we're still checking whether an existing token is valid,
-  // before we know if the app should show the login page or the app shell.
   const [booting, setBooting] = useState(true);
   const [loginPending, setLoginPending] = useState(false);
   const [error, setError] = useState(null);
@@ -18,24 +15,18 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  // On first load, if a token exists from a previous session, validate it
-  // against the API and restore the user. This is what lets a refresh keep
-  // you logged in instead of bouncing to /login every time.
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (!token) {
       setBooting(false);
       return;
     }
-
     fetchCurrentUser()
       .then((data) => setUser(data.user ?? data))
       .catch(() => clearSession())
       .finally(() => setBooting(false));
   }, [clearSession]);
 
-  // The axios interceptor fires this when any request comes back 401,
-  // e.g. the token expired mid-session. Keep context state in sync.
   useEffect(() => {
     const handleUnauthorized = () => clearSession();
     window.addEventListener("klinik:unauthorized", handleUnauthorized);
@@ -51,8 +42,7 @@ export function AuthProvider({ children }) {
       setUser(data.user ?? null);
       return { success: true };
     } catch (err) {
-      const message =
-        err.response?.data?.message || "Email atau kata sandi salah.";
+      const message = err.response?.data?.message || "Email atau kata sandi salah.";
       setError(message);
       return { success: false, message };
     } finally {
@@ -65,6 +55,13 @@ export function AuthProvider({ children }) {
     clearSession();
   }, [clearSession]);
 
+  // Lets a page (e.g. Pengaturan) push a freshly-saved profile into
+  // context after a successful update, so the topbar/sidebar reflect the
+  // new name immediately without requiring a full re-login.
+  const updateUser = useCallback((updatedUser) => {
+    setUser(updatedUser);
+  }, []);
+
   const value = {
     user,
     isAuthenticated: Boolean(user),
@@ -73,6 +70,7 @@ export function AuthProvider({ children }) {
     error,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -80,8 +78,6 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
   return ctx;
 }

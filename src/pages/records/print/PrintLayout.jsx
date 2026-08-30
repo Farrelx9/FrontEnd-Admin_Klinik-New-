@@ -37,7 +37,7 @@ export function ClinicLetterhead() {
           <LogoMark className="h-11 w-11 shrink-0" />
           <div>
             <p className="font-display text-xl font-bold leading-tight text-[var(--color-ink)]">
-              Klinik Senyum
+              drg. Irna Dental Care
             </p>
             <p className="font-body text-xs text-[var(--color-muted)]">
               Praktik Dokter Gigi Umum
@@ -199,7 +199,7 @@ export function SignatureBlock() {
   return (
     <div className="mt-10 flex flex-col items-end gap-6 break-inside-avoid-page sm:flex-row sm:items-start sm:justify-between">
       <p className="font-body text-[11px] text-[var(--color-muted)]">
-        Dokumen ini dicetak elektronik melalui sistem Klinik Senyum pada {today}.
+        Dokumen ini dicetak elektronik melalui sistem drg. Irna Dental Care pada {today}.
       </p>
       <div className="text-center font-body text-[13px]">
         <p className="text-[var(--color-muted)]">Hormat kami,</p>

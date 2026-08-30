@@ -19,7 +19,7 @@ function resolveTitle(pathname) {
   if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname];
   // Fallback for nested routes like /pasien/12
   const base = "/" + pathname.split("/")[1];
-  return PAGE_TITLES[base] || "Klinik Senyum";
+  return PAGE_TITLES[base] || "drg. Irna Dental Care";
 }
 
 export default function AdminLayout() {
