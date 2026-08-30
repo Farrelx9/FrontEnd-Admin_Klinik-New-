@@ -48,8 +48,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -57,7 +57,19 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: var(--color-mint-200);
   border-radius: 999px;
-  border: 2px solid var(--color-bg);
+  border: 1px solid var(--color-bg);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-mint-400);
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @keyframes fade-in-up {

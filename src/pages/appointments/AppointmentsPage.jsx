@@ -187,11 +187,11 @@ export default function AppointmentsPage() {
       {/* Date Navigator & Week Strip */}
       <div className="mb-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5 shadow-xs">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => setSelectedDate((d) => addDays(d, -1))}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40 transition-colors"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40 transition-colors"
               aria-label="Hari sebelumnya"
               title="Hari Sebelumnya"
             >
@@ -202,13 +202,13 @@ export default function AppointmentsPage() {
               value={selectedDate}
               onChange={setSelectedDate}
               variant="medium"
-              className="min-w-[190px]"
+              className="min-w-[140px] max-w-[190px] flex-1 sm:flex-initial"
             />
 
             <button
               type="button"
               onClick={() => setSelectedDate((d) => addDays(d, 1))}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40 transition-colors"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40 transition-colors"
               aria-label="Hari berikutnya"
               title="Hari Berikutnya"
             >
@@ -218,7 +218,7 @@ export default function AppointmentsPage() {
             <button
               type="button"
               onClick={() => setSelectedDate(toDateInput(new Date()))}
-              className="ml-1 shrink-0 rounded-lg border border-[var(--color-border)] px-3 py-2 font-body text-xs font-semibold text-[var(--color-teal-700)] hover:bg-[var(--color-mint-200)]/40 transition-colors"
+              className="ml-auto sm:ml-1 shrink-0 rounded-lg border border-[var(--color-border)] px-3 py-2 font-body text-xs font-semibold text-[var(--color-teal-700)] hover:bg-[var(--color-mint-200)]/40 transition-colors"
             >
               Hari Ini
             </button>
@@ -230,37 +230,39 @@ export default function AppointmentsPage() {
         </div>
 
         {/* Horizontal 7-Day Week Strip */}
-        <div className="mt-3.5 pt-3 border-t border-[var(--color-border)]/60 flex items-center justify-between gap-1.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-7 sm:gap-2">
-          {getWeekDays(selectedDate).map((item) => {
-            const isSelected = item.dateStr === selectedDate;
-            const isToday = item.dateStr === toDateInput(new Date());
-            return (
-              <button
-                key={item.dateStr}
-                type="button"
-                onClick={() => setSelectedDate(item.dateStr)}
-                className={`flex flex-col items-center justify-center rounded-lg py-2 min-w-[46px] shrink-0 sm:min-w-0 sm:shrink transition-all ${
-                  isSelected
-                    ? "bg-[var(--color-teal-700)] text-white font-bold shadow-xs scale-[1.02]"
-                    : isToday
-                    ? "border border-[var(--color-teal-600)] text-[var(--color-teal-700)] bg-[var(--color-mint-200)]/30 hover:bg-[var(--color-mint-200)]/70 font-semibold"
-                    : "bg-[var(--color-bg)]/60 text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40"
-                }`}
-              >
-                <span className={`text-[11px] uppercase tracking-wider ${isSelected ? "text-white/80" : "text-[var(--color-muted)]"}`}>
-                  {item.dayName}
-                </span>
-                <span className="text-sm sm:text-base font-bold leading-tight">
-                  {item.dayNum}
-                </span>
-              </button>
-            );
-          })}
+        <div className="mt-3.5 pt-3 border-t border-[var(--color-border)]/60 overflow-x-auto custom-scrollbar pb-1">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 min-w-[280px]">
+            {getWeekDays(selectedDate).map((item) => {
+              const isSelected = item.dateStr === selectedDate;
+              const isToday = item.dateStr === toDateInput(new Date());
+              return (
+                <button
+                  key={item.dateStr}
+                  type="button"
+                  onClick={() => setSelectedDate(item.dateStr)}
+                  className={`flex flex-col items-center justify-center rounded-lg py-2 px-1 min-w-0 transition-all ${
+                    isSelected
+                      ? "bg-[var(--color-teal-700)] text-white font-bold shadow-xs scale-[1.02]"
+                      : isToday
+                      ? "border border-[var(--color-teal-600)] text-[var(--color-teal-700)] bg-[var(--color-mint-200)]/30 hover:bg-[var(--color-mint-200)]/70 font-semibold"
+                      : "bg-[var(--color-bg)]/60 text-[var(--color-ink)] hover:bg-[var(--color-mint-200)]/40"
+                  }`}
+                >
+                  <span className={`text-[10px] sm:text-[11px] uppercase tracking-wider ${isSelected ? "text-white/80" : "text-[var(--color-muted)]"}`}>
+                    {item.dayName}
+                  </span>
+                  <span className="text-xs sm:text-base font-bold leading-tight mt-0.5">
+                    {item.dayNum}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Status tabs */}
-      <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1.5 custom-scrollbar px-0.5">
         {STATUS_TABS.map((tab) => {
           const active = statusFilter === tab.value;
           const count = tab.value ? counts[tab.value] || 0 : appointments.length;

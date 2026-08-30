@@ -190,13 +190,13 @@ export default function ReportsPage() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 max-w-full">
           <input
             type="date"
             value={range.start}
             max={range.end}
             onChange={(e) => handleCustomRange("start", e.target.value)}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 font-body text-sm text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)]"
+            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 font-body text-xs sm:text-sm text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)] shrink"
           />
           <span className="font-body text-xs text-[var(--color-muted)]">s/d</span>
           <input
@@ -205,7 +205,7 @@ export default function ReportsPage() {
             min={range.start}
             max={todayInput()}
             onChange={(e) => handleCustomRange("end", e.target.value)}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 font-body text-sm text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)]"
+            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 font-body text-xs sm:text-sm text-[var(--color-ink)] outline-none focus:ring-2 focus:ring-[var(--color-teal-500)] shrink"
           />
         </div>
       </div>
@@ -226,8 +226,8 @@ export default function ReportsPage() {
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Revenue chart */}
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 lg:col-span-2">
-          <div className="flex items-center justify-between">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5 sm:p-5 lg:col-span-2 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="font-display text-[15px] font-bold text-[var(--color-ink)]">
               Tren Pendapatan Harian
             </h3>
@@ -247,23 +247,24 @@ export default function ReportsPage() {
               </p>
             </div>
           ) : (
-            <div className="mt-4 h-64">
+            <div className="mt-4 h-64 sm:h-72 w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyRevenue} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+                <BarChart data={dailyRevenue} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
                   <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 11, fill: "var(--color-muted)" }}
+                    tick={{ fontSize: 10, fill: "var(--color-muted)" }}
                     axisLine={{ stroke: "var(--color-border)" }}
                     tickLine={false}
-                    interval={dailyRevenue.length > 14 ? Math.ceil(dailyRevenue.length / 10) : 0}
+                    minTickGap={22}
+                    dy={4}
                   />
                   <YAxis
-                    tick={{ fontSize: 11, fill: "var(--color-muted)" }}
+                    tick={{ fontSize: 10, fill: "var(--color-muted)" }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => (v >= 1000000 ? `${v / 1000000}jt` : v >= 1000 ? `${v / 1000}rb` : v)}
-                    width={40}
+                    width={42}
                   />
                   <Tooltip
                     formatter={(value) => formatCurrency(value)}
