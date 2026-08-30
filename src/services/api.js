@@ -1,11 +1,13 @@
 import axios from "axios";
 
-// Base URL of the Express REST API. Set in .env as VITE_API_URL.
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+// Base URL of the REST API. Set in .env via VITE_API_URL.
+const rawBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+const BASE_URL = rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
+    "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
@@ -34,3 +36,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+
