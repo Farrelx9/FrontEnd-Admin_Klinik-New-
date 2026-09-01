@@ -15,7 +15,6 @@ import AppointmentsPage from "./pages/appointments/AppointmentsPage";
 import ServicesPage from "./pages/tindakan/ServicesPage";
 import PaymentsPage from "./pages/payments/PaymentsPage";
 import ReportsPage from "./pages/reports/ReportsPage";
-import StaffPage from "./pages/staff/StaffPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import NotFoundPage from "./pages/misc/NotFoundPage";
 import ForbiddenPage from "./pages/misc/ForbiddenPage";
@@ -64,12 +63,6 @@ export default function App() {
               <Route path="/layanan" element={<ServicesPage />} />
               <Route path="/pembayaran" element={<PaymentsPage />} />
               <Route path="/laporan" element={<ReportsPage />} />
-
-              {/* Example of a role-restricted route — only admin/dokter can
-                  see staff management. Adjust roles to match your API. */}
-              <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-                <Route path="/staf" element={<StaffPage />} />
-              </Route>
 
               <Route path="/pengaturan" element={<SettingsPage />} />
             </Route>

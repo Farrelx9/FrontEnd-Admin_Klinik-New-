@@ -35,10 +35,7 @@ const NAV_GROUPS = [
   },
   {
     label: "Lainnya",
-    items: [
-      { to: "/staf", label: "Dokter & Staf", icon: UserCog },
-      { to: "/pengaturan", label: "Pengaturan", icon: Settings },
-    ],
+    items: [{ to: "/pengaturan", label: "Pengaturan", icon: Settings }],
   },
 ];
 

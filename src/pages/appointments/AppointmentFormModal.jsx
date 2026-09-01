@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import PatientPicker from "../../components/PatientPicker";
-import DoctorSelect from "../../components/DoctorSelect";
-import { createAppointment, updateAppointment } from "../../services/appointmentService";
+import {
+  createAppointment,
+  updateAppointment,
+} from "../../services/appointmentService";
 import DatePicker from "../../components/DatePicker";
 
-const QUICK_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
+const QUICK_TIMES = ["16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
 
 const STATUS_OPTIONS = [
   { value: "SCHEDULED", label: "Terjadwal" },
@@ -100,7 +102,9 @@ export default function AppointmentFormModal({
       if (err.response?.status === 422) {
         setErrors(err.response.data.errors || {});
       } else {
-        setSubmitError(err.response?.data?.message || "Gagal menyimpan jadwal.");
+        setSubmitError(
+          err.response?.data?.message || "Gagal menyimpan jadwal.",
+        );
       }
     } finally {
       setPending(false);
@@ -160,10 +164,6 @@ export default function AppointmentFormModal({
           </div>
         </div>
 
-        <Field label="Dokter" error={errors.dokterId?.[0]}>
-          <DoctorSelect value={dokterId} onChange={setDokterId} error={errors.dokterId?.[0]} />
-        </Field>
-
         {isEdit && (
           <Field label="Status">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -217,7 +217,11 @@ export default function AppointmentFormModal({
             disabled={pending}
             className="rounded-lg bg-[var(--color-teal-700)] px-5 py-2.5 font-body text-sm font-semibold text-white hover:bg-[var(--color-teal-600)] disabled:opacity-60"
           >
-            {pending ? "Menyimpan…" : isEdit ? "Simpan Perubahan" : "Tambah Jadwal"}
+            {pending
+              ? "Menyimpan…"
+              : isEdit
+                ? "Simpan Perubahan"
+                : "Tambah Jadwal"}
           </button>
         </div>
       </form>
@@ -229,10 +233,15 @@ function Field({ label, required, error, children }) {
   return (
     <div>
       <label className="mb-1.5 block font-body text-[13px] font-medium text-[var(--color-ink)]">
-        {label} {required && <span className="text-[var(--color-coral)]">*</span>}
+        {label}{" "}
+        {required && <span className="text-[var(--color-coral)]">*</span>}
       </label>
       {children}
-      {error && <p className="mt-1 font-body text-xs text-[var(--color-coral)]">{error}</p>}
+      {error && (
+        <p className="mt-1 font-body text-xs text-[var(--color-coral)]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
